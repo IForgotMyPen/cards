@@ -24,7 +24,8 @@ let currentDeck = {
 } // This variable will control which deck is drawn and selected from
   // Initialize it as an object with these functions for error management
 
-let imageOffset = '0px'; // For controlling where the next drawn card will be placed on the screen
+let imageTopOffset = '0px'; 
+let imageLeftOffset = '0px'; // For controlling where the next drawn card will be placed
 
 // Card class for individual cards
 
@@ -126,18 +127,27 @@ class Deck {
             title: `${capitalize(randCard.rank)} of ${capitalize(randCard.suit)}s`
         })
 
+        // If the cards reach the edge of the screen, move them down a row
+
+        if (Number(imageLeftOffset.split('px')[0]) + 210 > window.innerWidth) {
+            imageLeftOffset = '0px';
+
+            const newTopOffset = Number(imageTopOffset.split('px')[0]) + 90;
+            imageTopOffset = `${newTopOffset}px`; 
+        }
+
         Object.assign(newCard.style, {
             position: 'absolute',
-            top: 0,
-            left: imageOffset,
+            top: imageTopOffset,
+            left: imageLeftOffset,
             width: '200px'
         })
 
         // This is my somewhat confusing way of adjusting the offset so each card lays 
         // on top of the last
 
-        const newOffset = Number(imageOffset.split('px')[0]) + 30;
-        imageOffset = `${newOffset}px`; 
+        const newLeftOffset = Number(imageLeftOffset.split('px')[0]) + 30;
+        imageLeftOffset = `${newLeftOffset}px`; 
 
         document.querySelector('.card-images').append(newCard);
 
@@ -170,6 +180,22 @@ class Deck {
     }
 }
 
+// Function for capitalizing
+
+function capitalize(str) {
+    return String(str).charAt(0).toUpperCase() + String(str).slice(1);
+}
+
+// Function for clearing the board of cards
+
+function clearBoard() {
+    document.querySelector('.card-images').innerHTML = '';
+    imageLeftOffset = '0px';
+    imageTopOffset = '0px';
+}
+
+
+
 // Creating placeholder decks for testing new things
 
 const suits = ['spade', 'heart', 'diamond', 'club'];
@@ -190,16 +216,3 @@ for (const rank of ranks) {
 
 const deck1 = new Deck('standard', deck1Cards);
 const deck2 = new Deck('all-hearts', deck2Cards);
-
-// Function for capitalizing
-
-function capitalize(str) {
-    return String(str).charAt(0).toUpperCase() + String(str).slice(1);
-}
-
-// Function for clearing the board of cards
-
-function clearBoard() {
-    document.querySelector('.card-images').innerHTML = '';
-    imageOffset= '0px';
-}
