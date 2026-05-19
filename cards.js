@@ -63,8 +63,9 @@ class Deck {
         const deckPlaceholder = this;
 
         const newButton = document.createElement('button');
-        newButton.textContent = `${this.#name}`;
+        newButton.textContent = `${this.#name} ${this.#cardCount}`;
         newButton.type = 'button';
+        newButton.id = `${this.#name}-button`;
         newButton.addEventListener('click', () => {
             currentDeck = deckPlaceholder;
             Object.assign(newButton.style, {
@@ -82,9 +83,6 @@ class Deck {
                         color: ''
                     })
                 });
-
-            document.querySelector('#remaining-cards').textContent = 
-            `Remaining cards: ${this.#cardCount}/${this.#cards.length}`;
         })
         document.querySelector('.deck-buttons').append(newButton); 
     }
@@ -152,8 +150,8 @@ class Deck {
         }
         this.#cardCount -= 1;
 
-        document.querySelector('#remaining-cards').textContent = 
-            `Remaining cards: ${this.#cardCount}/${this.#cards.length}`;
+        document.querySelector(`#${this.#name}-button`).textContent = 
+            `${this.#name} ${this.#cardCount}`;
     }
 
     // Method to reset the deck (i.e. make all cards available again)
@@ -162,8 +160,8 @@ class Deck {
         this.#availableCards = [...this.#cards];
         this.#cardCount = this.#cards.length;
 
-        document.querySelector('#remaining-cards').textContent = 
-            `Remaining cards: ${this.#cardCount}/${this.#cards.length}`;
+        document.querySelector(`#${this.#name}-button`).textContent = 
+            `${this.#name} ${this.#cardCount}`;
     }
 }
 
@@ -185,8 +183,8 @@ for (const rank of ranks) {
     deck2Cards.push(new Card('heart', rank, `heart_${rank}.png`));
 }
 
-const deck1 = new Deck('standard deck', deck1Cards);
-const deck2 = new Deck('all-hearts deck', deck2Cards);
+const deck1 = new Deck('standard', deck1Cards);
+const deck2 = new Deck('all-hearts', deck2Cards);
 
 // Function for capitalizing
 
