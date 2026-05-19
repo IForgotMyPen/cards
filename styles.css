@@ -1,7 +1,7 @@
 * {
+    font-size: large;
     font-family: georgia;
 }
-
 .card-images {
     position: relative;
     top: 0;
@@ -9,4 +9,13 @@
 }
 #error-message {
     color: red;
+}
+.deck-buttons {
+    text-align: center;
+}
+.static-elements {
+    text-align: center;
+}
+body {
+    background-color: beige;
 }
