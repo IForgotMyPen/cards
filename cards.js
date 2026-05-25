@@ -150,7 +150,7 @@ class Deck {
         return Object.assign(document.createElement('img'), {
             src: `${randCard.image}`,
             title: `${capitalize(randCard.rank)} of ${capitalize(randCard.suit)}s`,
-            class: 'card-images'
+            className: 'card-images'
         })
     }
 
@@ -179,7 +179,8 @@ class Deck {
         const newLeftOffset = Number(imageLeftOffset.split('px')[0]) + 30;
         imageLeftOffset = `${newLeftOffset}px`; 
 
-        document.querySelector('.card-display-area').append(cardImage);
+        document.querySelector(`#${currentTab}`)
+            .querySelector('.card-display-area').append(cardImage);
     }
 
     // Helper method to remove a card from the available cards in the deck
@@ -215,7 +216,8 @@ function capitalize(str) {
 // Function for clearing the board of cards
 
 function clearBoard() {
-    document.querySelector('.card-display-area').innerHTML = '';
+    document.querySelector(`#${currentTab}`)
+        .querySelector('.card-display-area').innerHTML = '';
     imageLeftOffset = '0px';
     imageTopOffset = '0px';
 }
