@@ -1,8 +1,9 @@
 // Some "global variables" that are useful throughout the project
 
-let currentTab;
-
 let errorMessageTimeout; // Error message timeout time
+
+let currentBoard;
+let boards = [];
 
 let currentDeck = {
     draw() {
@@ -26,23 +27,20 @@ let currentDeck = {
 } // This variable will control which deck is drawn and selected from
   // Initialize it as an object with these functions for error management
 
-let imageTopOffset = '0px'; 
-let imageLeftOffset = '0px'; // For controlling where the next drawn card will be placed
-
 // Function for changing the tab
 
-function changeTab(event, newTab) {
+function changeBoard(event, newBoard) {
 
     // This might or might not stay, but it is moving the deck buttons between tabs
 
-    if (currentTab === undefined) {currentTab = 'zen-mode'} // This isn't pretty, but the buttons
+    if (currentBoard === undefined) {currentBoard = 'board-1'} // This isn't pretty, but the buttons
                                                             // will always appear on the first tab 
                                                             // first
-    const buttons = document.querySelector(`#${currentTab}`).querySelectorAll('.deck-links');
-    const newLocation = document.querySelector(`#${newTab}`).querySelector('.deck-selection-menu');
+    const buttons = document.querySelector(`#${currentBoard}`).querySelectorAll('.deck-links');
+    const newLocation = document.querySelector(`#${newBoard}`).querySelector('.deck-selection-menu');
     buttons.forEach((button) => newLocation.append(button));
     
-    currentTab = newTab;
+    currentBoard = newBoard;
 
     document.querySelectorAll('.tab-content')
         .forEach((tab) => tab.style.display = 'none');
@@ -51,8 +49,40 @@ function changeTab(event, newTab) {
         .forEach((tabLink) => tabLink.classList.remove('active'));
 
     
-    document.querySelector(`#${newTab}`).style.display = 'block';
+    document.querySelector(`#${newBoard}`).style.display = 'block';
     event.currentTarget.classList.add('active');
+}
+
+class Board {
+    #name;
+    #leftOffset;
+    #topOffset;
+
+    constructor (name) {
+        this.#name = name;
+        this.#leftOffset = '0px';
+        this.#topOffset = '0px';
+
+        boards.push(this);
+    }
+
+    get name() {return this.#name;}
+    get leftOffset() {return this.#leftOffset}
+    get topOffset() {return this.#topOffset}
+
+    setLeftOffset(newLeftOffset) {
+        this.#leftOffset = newLeftOffset;
+    }
+    
+    setTopOffset(newTopOffset) {
+        this.#topOffset = newTopOffset;
+    }
+}
+
+function getBoard(name) {
+    for (const board of boards) {
+        if (board.name === name) {return board;}
+    }
 }
 
 // Card class for individual cards
@@ -158,6 +188,9 @@ class Deck {
 
     placeCardImageHelper(cardImage) {
 
+        let imageLeftOffset = getBoard(currentBoard).leftOffset;
+        let imageTopOffset = getBoard(currentBoard).topOffset;
+
         // If the cards reach the edge of the screen, move them down a row
 
         if (Number(imageLeftOffset.split('px')[0]) + 210 > window.innerWidth) {
@@ -179,8 +212,11 @@ class Deck {
         const newLeftOffset = Number(imageLeftOffset.split('px')[0]) + 30;
         imageLeftOffset = `${newLeftOffset}px`; 
 
-        document.querySelector(`#${currentTab}`)
+        document.querySelector(`#${currentBoard}`)
             .querySelector('.card-display-area').append(cardImage);
+
+        getBoard(currentBoard).setLeftOffset(imageLeftOffset);
+        getBoard(currentBoard).setTopOffset(imageTopOffset);
     }
 
     // Helper method to remove a card from the available cards in the deck
@@ -216,10 +252,10 @@ function capitalize(str) {
 // Function for clearing the board of cards
 
 function clearBoard() {
-    document.querySelector(`#${currentTab}`)
+    document.querySelector(`#${currentBoard}`)
         .querySelector('.card-display-area').innerHTML = '';
-    imageLeftOffset = '0px';
-    imageTopOffset = '0px';
+    getBoard(currentBoard).setLeftOffset('0px');
+    getBoard(currentBoard).setTopOffset('0px');
 }
 
 
@@ -244,3 +280,8 @@ for (const rank of ranks) {
 
 const deck1 = new Deck('standard', deck1Cards);
 const deck2 = new Deck('all-hearts', deck2Cards);
+
+// Creating boards
+
+const board1 = new Board('board-1');
+const board2 = new Board('board-2');
