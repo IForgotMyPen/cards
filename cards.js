@@ -3,42 +3,11 @@
 let errorMessageTimeout; // Error message timeout time
 let currentBoard; // The currently selected board
 let boards = []; // An array of all boards
-let currentDeck = {
-    draw() {
-        if (errorMessageTimeout !== undefined) {
-            clearTimeout(errorMessageTimeout);
-        }
-        const errorMessage = document.querySelector('#error-message');
-            errorMessage.textContent = 'Error: No deck selected.';
-
-            errorMessageTimeout = setTimeout(() => errorMessage.textContent = '', 3000);
-    },
-    resetDeck() {
-        if (errorMessageTimeout !== undefined) {
-            clearTimeout(errorMessageTimeout);
-        }
-        const errorMessage = document.querySelector('#error-message');
-            errorMessage.textContent = 'Error: No deck selected.';
-
-            errorMessageTimeout = setTimeout(() => errorMessage.textContent = '', 3000);
-    }
-} // This variable will control which deck is drawn and selected from
-  // Initialize it as an object with these methods for error management
 
 // Function for changing the board
 
-function changeBoard(event, newBoard) {
-
-    // This might or might not stay, but it is moving the deck buttons between boards
-
-    if (currentBoard === undefined) {currentBoard = 'board-1'} // This isn't pretty, but the buttons
-                                                            // will always appear on the first board 
-                                                            // first
-    const buttons = document.querySelector(`#${currentBoard}`).querySelectorAll('.deck-links');
-    const newLocation = document.querySelector(`#${newBoard}`).querySelector('.deck-selection-menu');
-    buttons.forEach((button) => newLocation.append(button));
-    
-    currentBoard = newBoard;
+function changeBoard(event, newBoardName) {
+    currentBoard = getBoard(newBoardName); // using newBoardName because we are calling this in html
 
     document.querySelectorAll('.board-content')
         .forEach((board) => board.style.display = 'none');
@@ -47,26 +16,50 @@ function changeBoard(event, newBoard) {
         .forEach((boardLink) => boardLink.classList.remove('active'));
 
     
-    document.querySelector(`#${newBoard}`).style.display = 'block';
+    document.querySelector(`#${newBoardName}`).style.display = 'block';
     event.currentTarget.classList.add('active');
 }
 
 class Board {
-    #name;
-    #leftOffset;
-    #topOffset;
+    #name; // name of the board
+    #leftOffset; // left offset for placing card images
+    #topOffset; // top offset for placing card images
+    #currentDeck; // the currently selected deck on this board
+    #decks; // decks on this board
 
     constructor (name) {
         this.#name = name;
         this.#leftOffset = '0px';
         this.#topOffset = '0px';
 
+        this.#currentDeck = {
+            draw() {
+                if (errorMessageTimeout !== undefined) {
+                    clearTimeout(errorMessageTimeout);
+                }
+                const errorMessage = document.querySelector('#error-message');
+                    errorMessage.textContent = 'Error: No deck selected.';
+
+                    errorMessageTimeout = setTimeout(() => errorMessage.textContent = '', 3000);
+            },
+            resetDeck() {
+                if (errorMessageTimeout !== undefined) {
+                    clearTimeout(errorMessageTimeout);
+                }
+                const errorMessage = document.querySelector('#error-message');
+                    errorMessage.textContent = 'Error: No deck selected.';
+
+                    errorMessageTimeout = setTimeout(() => errorMessage.textContent = '', 3000);
+            }
+        }
         boards.push(this);
     }
 
     get name() {return this.#name;}
-    get leftOffset() {return this.#leftOffset}
-    get topOffset() {return this.#topOffset}
+    get leftOffset() {return this.#leftOffset;}
+    get topOffset() {return this.#topOffset;}
+    get currentDeck() {return this.#currentDeck;}
+    get decks() {return this.#decks;}
 
     setLeftOffset(newLeftOffset) {
         this.#leftOffset = newLeftOffset;
@@ -74,6 +67,10 @@ class Board {
     
     setTopOffset(newTopOffset) {
         this.#topOffset = newTopOffset;
+    }
+
+    setCurrentDeck(newCurrentDeck) {
+        this.#currentDeck = newCurrentDeck;
     }
 }
 
@@ -88,7 +85,7 @@ function getBoard(name) {
 class Card {
     #suit;
     #rank;
-    #image
+    #image;
 
     constructor(suit, rank, image) {
         this.#suit = suit;
@@ -107,13 +104,15 @@ class Deck {
     #name;
     #cardCount;
     #cards;
-    #availableCards
+    #availableCards;
+    #board;
 
-    constructor(name, cards) {
+    constructor(name, cards, board) {
         this.#name = name; // name of the deck
         this.#cardCount = cards.length; // number of cards in the deck
         this.#cards = cards; // all cards in the deck (never edited)
         this.#availableCards = [...this.#cards]; // all cards available to draw (gets edited)
+        this.#board = board; // board that the deck is on
 
         // Appending a new button to the deck-selection-menu div to switch the currentDeck variable 
         // to this deck
@@ -128,20 +127,22 @@ class Deck {
         })
 
         newButton.addEventListener('click', () => {
-            currentDeck = deckPlaceholder;
+            currentBoard.setCurrentDeck(deckPlaceholder);
 
-            document.querySelectorAll('.deck-links')
+            document.querySelector(`#${this.#board.name}`).querySelectorAll('.deck-links')
                 .forEach((deckButton) => deckButton.classList.remove('active'));
 
             newButton.classList.add('active');
         })
-        document.querySelector('.deck-selection-menu').append(newButton); 
+        document.querySelector(`#${this.#board.name}`)
+            .querySelector('.deck-selection-menu').append(newButton);
     }
 
     get name() {return this.#name;}
     get cardCount() {return this.#cardCount;}
     get cards() {return this.#cards;}
     get availableCards() {return this.#availableCards;}
+    get board() {return this.#board;}
 
     // Method for drawing a card from the available cards in the deck
 
@@ -149,11 +150,11 @@ class Deck {
 
         // Simple catch to end the function if the deck is empty
 
-        if (currentDeck.cardCount === 0) {
+        if (currentBoard.currentDeck.cardCount === 0) {
             if (errorMessageTimeout !== undefined) {
                 clearTimeout(errorMessageTimeout);
             }
-            const errorMessage = document.querySelector('#error-message');
+            const errorMessage = document.querySelector(`#${currentBoard.name}`).querySelector('#error-message');
             errorMessage.textContent = 'Error: Deck empty. Try resetting.';
 
             errorMessageTimeout = setTimeout(() => errorMessage.textContent = '', 3000);
@@ -186,8 +187,8 @@ class Deck {
 
     placeCardImageHelper(cardImage) {
 
-        let imageLeftOffset = getBoard(currentBoard).leftOffset;
-        let imageTopOffset = getBoard(currentBoard).topOffset;
+        let imageLeftOffset = currentBoard.leftOffset;
+        let imageTopOffset = currentBoard.topOffset;
 
         // If the cards reach the edge of the screen, move them down a row
 
@@ -210,11 +211,11 @@ class Deck {
         const newLeftOffset = Number(imageLeftOffset.split('px')[0]) + 30;
         imageLeftOffset = `${newLeftOffset}px`; 
 
-        document.querySelector(`#${currentBoard}`)
+        document.querySelector(`#${currentBoard.name}`)
             .querySelector('.card-display-area').append(cardImage);
 
-        getBoard(currentBoard).setLeftOffset(imageLeftOffset);
-        getBoard(currentBoard).setTopOffset(imageTopOffset);
+        currentBoard.setLeftOffset(imageLeftOffset);
+        currentBoard.setTopOffset(imageTopOffset);
     }
 
     // Helper method to remove a card from the available cards in the deck
@@ -226,7 +227,7 @@ class Deck {
         }
         this.#cardCount -= 1;
 
-        document.querySelector(`#${this.#name}-button`).textContent = 
+        document.querySelector(`#${currentBoard.name}`).querySelector(`#${this.#name}-button`).textContent = 
             `${this.#name} ${this.#cardCount}`;
     }
 
@@ -250,7 +251,7 @@ function capitalize(str) {
 // Function for clearing the board of cards
 
 function clearBoard() {
-    document.querySelector(`#${currentBoard}`)
+    document.querySelector(`#${currentBoard.name}`)
         .querySelector('.card-display-area').innerHTML = '';
     getBoard(currentBoard).setLeftOffset('0px');
     getBoard(currentBoard).setTopOffset('0px');
@@ -276,10 +277,12 @@ for (const rank of ranks) {
     deck2Cards.push(new Card('heart', rank, `heart_${rank}.png`));
 }
 
-const deck1 = new Deck('standard', deck1Cards);
-const deck2 = new Deck('all-hearts', deck2Cards);
-
 // Creating boards
 
 const board1 = new Board('board-1');
 const board2 = new Board('board-2');
+
+const deck1 = new Deck('standard', deck1Cards, board1);
+const deck2 = new Deck('standard', deck1Cards, board2);
+const deck3 = new Deck('all-hearts', deck2Cards, board1);
+const deck4 = new Deck('all-hearts', deck2Cards, board2);
