@@ -9,6 +9,7 @@
     <div class="board-menu">
         <button type="button" class="board-links" onclick="changeBoard(event, 'board-1')">Board 1</button>
         <button type="button" class="board-links" onclick="changeBoard(event, 'board-2')">Board 2</button>
+        <button type="button" class="board-links" onclick="changeBoard(event, 'typing-board')">Typing Game</button>
     </div>
 
     <p></p>
@@ -43,6 +44,22 @@
             <button type="button" class="action-links" onclick="currentBoard.currentDeck.draw()">Draw</button>
             <button type="button" class="action-links" onclick="currentBoard.currentDeck.resetDeck()">Reset deck</button>
             <button type="button" class="action-links" onclick="clearBoard()">Clear board</button>
+        </div>
+
+        <p id="error-message"></p>
+
+        <div class="card-display-area">
+        </div>
+    </div>
+
+    <div id="typing-board" class="board-content">
+        <div class="deck-selection-menu">
+        </div>
+
+        <p></p>
+
+        <div class="action-menu">
+            <button type="button" class="action-links" onclick="startTypingGame()">Start!</button>
         </div>
 
         <p id="error-message"></p>
