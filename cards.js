@@ -171,6 +171,8 @@ class Deck {
         this.placeCardImageHelper(this.createCardImageHelper(randCard));
 
         this.removeCardHelper(randCard);
+
+        return randCard;
     }
 
     // Helper method for creating a card image from a random card
@@ -257,6 +259,21 @@ function clearBoard() {
     currentBoard.setTopOffset('0px');
 }
 
+// Typing minigame code
+
+const displayedCards = [];
+function startTypingGame() {
+    setInterval(checkUserTypingInput, 250);
+    setInterval(drawFromCurrentDeck, 2000);
+}
+function checkUserTypingInput() {
+    const userTypingInput = document.querySelector('#user-typing-input').value;
+}
+function drawFromCurrentDeck() {
+    displayedCards.push(typingBoard.currentDeck.draw());
+    console.log(displayedCards);
+}
+
 
 
 // Creating placeholder decks for testing new things
@@ -281,8 +298,11 @@ for (const rank of ranks) {
 
 const board1 = new Board('board-1');
 const board2 = new Board('board-2');
+const typingBoard = new Board('typing-board');
 
 const deck1 = new Deck('standard', deck1Cards, board1);
-const deck2 = new Deck('standard', deck1Cards, board2);
-const deck3 = new Deck('all-hearts', deck2Cards, board1);
+const deck2 = new Deck('all-hearts', deck2Cards, board1);
+const deck3 = new Deck('standard', deck1Cards, board2);
 const deck4 = new Deck('all-hearts', deck2Cards, board2);
+const deck5 = new Deck('standard', deck1Cards, typingBoard);
+const deck6 = new Deck('all-hearts', deck2Cards, typingBoard);

@@ -25,6 +25,9 @@ body {
     top: 0;
     left: 0;
 }
+.user-input-area {
+    text-align: center;
+}
 .active {
     background-color: gray;
     color: white;
