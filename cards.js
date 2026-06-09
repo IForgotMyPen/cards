@@ -1,5 +1,21 @@
 // Some "global variables" that are useful throughout the project
 
+cardNumberDictionary = {
+    'ace': 1,
+    'two': 2,
+    'three': 3,
+    'four': 4,
+    'five': 5,
+    'six': 6,
+    'seven': 7,
+    'eight': 8,
+    'nine': 9,
+    'ten': 10,
+    'jack': 11,
+    'queen': 12,
+    'king': 13
+} // "dictionary" for translating card names to numbers
+
 let errorMessageTimeout; // Error message timeout time
 let currentBoard; // The currently selected board
 let boards = []; // An array of all boards
@@ -303,7 +319,7 @@ function drawFromCurrentDeck() {
 
 const suits = ['spade', 'heart', 'diamond', 'club'];
 
-const ranks = ['ace',2,3,4,5,6,7,8,9,10,'jack','queen','king'];
+const ranks = ['ace','two','three','four','five','six','seven','eight','nine','ten','jack','queen','king'];
 
 const deck1Cards = [];
 for (const suit of suits) {
