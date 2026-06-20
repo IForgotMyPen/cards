@@ -297,12 +297,18 @@ function startTypingGame() {
     checkTypingLoop = setInterval(checkUserTypingInput, 50);
     drawLoop = setInterval(drawFromCurrentDeck, 2000);
     timeLoop = setInterval(updateTimeRemaining, 1000);
+
+    // hides all other buttons so the user cannot switch between boards or decks during the game
+
+    document.querySelectorAll('.board-links').forEach((boardLink) => boardLink.style.display = 'none');
+    document.querySelector('#typing-board').querySelectorAll('.deck-links')
+        .forEach((deckLink) => deckLink.style.display = 'none');
 }
 
 // function for stopping the typing minigame
 
 function stopTypingGame() {
-    if (drawLoop === undefined || timeLoop === undefined) {
+    if (timeRemaining === undefined) {
         if (errorMessageTimeout !== undefined) {
             clearTimeout(errorMessageTimeout);
         }
@@ -329,6 +335,13 @@ function stopTypingGame() {
     timeRemaining = undefined;
     document.querySelector('#typing-board').querySelector('#time-remaining')
             .innerHTML = '';
+    
+    // displays the buttons for the boards and decks again
+    
+    document.querySelectorAll('.board-links').forEach((boardLink) => boardLink.style.display = '');  
+    document.querySelector('#typing-board').querySelectorAll('.deck-links')
+        .forEach((deckLink) => deckLink.style.display = '');
+
 }
 
 // function for checking if the user input the name of a displayed card
