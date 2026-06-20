@@ -41,6 +41,8 @@ class Board {
                     errorMessage.textContent = 'Error: No deck selected.';
 
                     errorMessageTimeout = setTimeout(() => errorMessage.textContent = '', 3000);
+
+                return undefined;
             },
             resetDeck() {
                 if (errorMessageTimeout !== undefined) {
@@ -275,6 +277,21 @@ let timeRemaining;
 // basically just starts the function loops
 
 function startTypingGame() {
+    // checks if a deck has been selected
+    // if not, displays and error and does not start the minigame
+
+    if (currentBoard.currentDeck.draw() === undefined) {
+        if (errorMessageTimeout !== undefined) {
+            clearTimeout(errorMessageTimeout);
+        }
+        const errorMessage = document.querySelector(`#${currentBoard.name}`).querySelector('#error-message');
+        errorMessage.textContent = 'Error: Cannot start game. Try selecting a deck.';
+
+        errorMessageTimeout = setTimeout(() => errorMessage.textContent = '', 3000);
+
+        return;
+    }
+
     document.querySelector('#user-typing-input').value = '';
 
     checkTypingLoop = setInterval(checkUserTypingInput, 50);
@@ -285,6 +302,18 @@ function startTypingGame() {
 // function for stopping the typing minigame
 
 function stopTypingGame() {
+    if (drawLoop === undefined || timeLoop === undefined) {
+        if (errorMessageTimeout !== undefined) {
+            clearTimeout(errorMessageTimeout);
+        }
+        const errorMessage = document.querySelector(`#${currentBoard.name}`).querySelector('#error-message');
+        errorMessage.textContent = 'Error: No currently running game.';
+
+        errorMessageTimeout = setTimeout(() => errorMessage.textContent = '', 3000);
+
+        return;
+    }
+
     clearInterval(checkTypingLoop);
     clearInterval(drawLoop);
     clearInterval(timeLoop);
