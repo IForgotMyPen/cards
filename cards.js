@@ -317,14 +317,14 @@ function checkUserTypingInput() {
 
             displayedCards = displayedCards.filter(filterCard => filterCard.name !== userTypingInput);
 
+            if (currentBoard.currentDeck.availableCards.length === 0 && displayedCards.length === 0) {
+                setTimeout(() => {
+                    alert('Congratulations! You cleared all the cards before the time ran out!');
+                }, 10);
+                stopTypingGame();
+            }
             break;
         }
-    }
-    if (currentBoard.currentDeck.availableCards.length === 0 && displayedCards.length === 0) {
-        setTimeout(() => {
-            alert('Congratulations! You cleared all the cards before the time ran out!');
-        }, 10);
-        stopTypingGame();
     }
 }
 
