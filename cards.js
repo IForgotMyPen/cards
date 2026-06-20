@@ -263,7 +263,7 @@ function clearBoard() {
     currentBoard.setTopOffset('0px');
 }
 
-// Typing minigame code
+// TYPING MINIGAME
 
 let displayedCards = [];
 let checkTypingLoop;
@@ -272,13 +272,17 @@ let drawLoop;
 function startTypingGame() {
     document.querySelector('#user-typing-input').value = '';
 
-    checkTypingLoop = setInterval(checkUserTypingInput, 250);
-    drawLoop = setInterval(drawFromCurrentDeck, 1000);
+    checkTypingLoop = setInterval(checkUserTypingInput, 50);
+    drawLoop = setInterval(drawFromCurrentDeck, 2500);
 }
 
 function stopTypingGame() {
     clearInterval(checkTypingLoop);
     clearInterval(drawLoop);
+
+    currentBoard.currentDeck.resetDeck();
+    clearBoard();
+    document.querySelector('#user-typing-input').value = '';
 }
 
 function checkUserTypingInput() {
