@@ -33,6 +33,7 @@ class Board {
         this.#topOffset = '0px';
 
         this.#currentDeck = {
+            cardCount: -1,
             draw() {
                 if (errorMessageTimeout !== undefined) {
                     clearTimeout(errorMessageTimeout);
@@ -41,8 +42,6 @@ class Board {
                     errorMessage.textContent = 'Error: No deck selected.';
 
                     errorMessageTimeout = setTimeout(() => errorMessage.textContent = '', 3000);
-
-                return undefined;
             },
             resetDeck() {
                 if (errorMessageTimeout !== undefined) {
@@ -52,7 +51,7 @@ class Board {
                     errorMessage.textContent = 'Error: No deck selected.';
 
                     errorMessageTimeout = setTimeout(() => errorMessage.textContent = '', 3000);
-            }
+            },
         }
         boards.push(this);
     }
@@ -280,7 +279,7 @@ function startTypingGame() {
     // checks if a deck has been selected
     // if not, displays and error and does not start the minigame
 
-    if (currentBoard.currentDeck.draw() === undefined) {
+    if (currentBoard.currentDeck.cardCount === -1) {
         if (errorMessageTimeout !== undefined) {
             clearTimeout(errorMessageTimeout);
         }
@@ -376,6 +375,8 @@ function drawFromCurrentDeck() {
     if (currentBoard.currentDeck.availableCards.length !== 0) {
         displayedCards.push(typingBoard.currentDeck.draw());
     }
+
+    console.log(displayedCards);
 }
 
 // function for getting the initial remaining time based on the length of the currently selected deck
