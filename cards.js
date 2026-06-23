@@ -295,6 +295,7 @@ function startTypingGame() {
 
     checkTypingLoop = setInterval(checkUserTypingInput, 50);
     drawLoop = setInterval(drawFromCurrentDeck, 2000);
+    updateTimeRemaining();
     timeLoop = setInterval(updateTimeRemaining, 1000);
 
     // hides all other buttons so the user cannot switch between boards or decks during the game
@@ -340,7 +341,6 @@ function stopTypingGame() {
     document.querySelectorAll('.board-links').forEach((boardLink) => boardLink.style.display = '');  
     document.querySelector('#typing-board').querySelectorAll('.deck-links')
         .forEach((deckLink) => deckLink.style.display = '');
-
 }
 
 // function for checking if the user input the name of a displayed card
@@ -428,13 +428,10 @@ for (const rank of ranks) {
 
 // Creating boards
 
-const board1 = new Board('board-1');
-const board2 = new Board('board-2');
+const zenBoard = new Board('zen-board');
 const typingBoard = new Board('typing-board');
 
-const deck1 = new Deck('standard', deck1Cards, board1);
-const deck2 = new Deck('all-hearts', deck2Cards, board1);
-const deck3 = new Deck('standard', deck1Cards, board2);
-const deck4 = new Deck('all-hearts', deck2Cards, board2);
+const deck1 = new Deck('standard', deck1Cards, zenBoard);
+const deck2 = new Deck('all-hearts', deck2Cards, zenBoard);
 const deck5 = new Deck('standard', deck1Cards, typingBoard);
 const deck6 = new Deck('all-hearts', deck2Cards, typingBoard);
