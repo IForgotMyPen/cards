@@ -16,7 +16,12 @@ function changeBoard(event, newBoardName) {
         .forEach((boardLink) => boardLink.classList.remove('active'));
 
     
-    document.querySelector(`#${newBoardName}`).style.display = 'block';
+    document.querySelector(`#${newBoardName}`).style.display = 'flex';
+    document.querySelector(`#${newBoardName}`).style.width = '50%'
+    document.querySelector(`#${newBoardName}`).style.flexDirection = 'column';
+    document.querySelector(`#${newBoardName}`).style.margin = '0px auto';
+    document.querySelector(`#${newBoardName}`).style.alignItems = 'center';
+    document.querySelector(`#${newBoardName}`).style.gap = '10px';
     event.currentTarget.classList.add('active');
 }
 

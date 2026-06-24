@@ -16,8 +16,6 @@
         <div class="deck-selection-menu">
         </div>
 
-        <p></p>
-
         <div class="action-menu">
             <button type="button" class="action-links" onclick="currentBoard.currentDeck.draw()">Draw</button>
             <button type="button" class="action-links" onclick="currentBoard.currentDeck.resetDeck()">Reset deck</button>
@@ -34,18 +32,16 @@
         <div class="deck-selection-menu">
         </div>
 
-        <p></p>
-
         <div class="action-menu">
             <button type="button" class="action-links" onclick="startTypingGame()">Start</button>
             <button type="button" class="action-links" onclick="stopTypingGame()">Stop</button>
         </div>
 
-        <p id="error-message"></p>
-
         <form class="user-input-area">
             <input type="text" id="user-typing-input" placeholder="Type card name here...">
         </form>
+
+        <p id="error-message"></p>
 
         <p id="time-remaining"></p>
 

@@ -23,27 +23,23 @@ button:hover {
 }
 .board-content {
     display: none;
-}
-.deck-selection-menu {
-    text-align: center;
-}
-.action-menu {
-    text-align: center;
+    border: 2px solid #9ab1b1;
+    border-radius: 8px;
+    padding-inline: 0;
+    padding: 1rem;
+    min-height: 100vh;
 }
 #error-message {
     color: red;
 }
 #time-remaining {
-    text-align: center;
     color: white;
 }
 .card-display-area {
+    align-self: flex-start;
     position: relative;
     top: 0;
     left: 0;
-}
-.user-input-area {
-    text-align: center;
 }
 #user-typing-input {
     width: 250px;
