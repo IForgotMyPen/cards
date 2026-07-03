@@ -1,21 +1,26 @@
+@keyframes headerAnimation {
+    0% {transform: translateY(-3px) translateX(1px);}
+    50% {transform: translateY(3px) translateX(-1px);}
+    100% {transform: translateY(-3px) translateX(1px);}
+}
 * {
     font-family: monospace;
-    font-size: large;
+    font-size: 18px;
 }
 body {
     background: #101c1c;
 }
 button {
     background-color: #101c1c;
-    color: white;
     border-color: #3C4E4E;
     border-radius: 0;
     border-width: 0.6mm;
+    color: white;
     transition-duration: 0.5s;
 }
 button:hover {
     border-color: #9ab1b1;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 .board-menu {
     text-align: center;
@@ -35,6 +40,15 @@ button:hover {
 .card-images {
     height: auto;
     width: 20%;
+}
+#document-header {
+    color: white;
+    font-size: 26px;
+    text-align: center;
+    animation: headerAnimation;
+    animation-duration: 7s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
 }
 #user-typing-input {
     background-color: #101c1c;
