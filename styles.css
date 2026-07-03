@@ -1,18 +1,17 @@
 * {
-    font-size: large;
     font-family: monospace;
+    font-size: large;
 }
 body {
     background: #101c1c;
 }
 button {
-    border-radius: 0;
-    border-color: #3C4E4E;
-    border-width: 0.6mm;
-    background-color: white;
-    transition-duration: 0.5s;
     background-color: #101c1c;
     color: white;
+    border-color: #3C4E4E;
+    border-radius: 0;
+    border-width: 0.6mm;
+    transition-duration: 0.5s;
 }
 button:hover {
     border-color: #9ab1b1;
@@ -22,37 +21,35 @@ button:hover {
     text-align: center;
 }
 .board-content {
-    display: none;
     border: 2px solid #9ab1b1;
     border-radius: 8px;
-    padding-inline: 0;
-    padding: 1rem;
-    min-height: 100vh;
+    display: none;
     flex-wrap: wrap;
+    min-height: 100vh;
+    padding: 1rem;
+    padding-inline: 0;
+}
+.card-display-area {
+    align-self: flex-start;
+    flex: 1;
+}
+.card-images {
+    height: auto;
+    width: 20%;
+}
+#user-typing-input {
+    background-color: #101c1c;
+    border-color: #9ab1b1;
+    color: white;
+    width: 250px;
+}
+.active {
+    border-color: #9ab1b1;
+    color: white;
 }
 #error-message {
     color: red;
 }
 #time-remaining {
     color: white;
-}
-.card-display-area {
-    align-self: flex-start;
-    position: relative;
-    top: 0;
-    left: 0;
-}
-#user-typing-input {
-    width: 250px;
-    background-color: #101c1c;
-    color: white;
-    border-color: #9ab1b1;
-}
-.active {
-    border-color: #9ab1b1;
-    color: white;
-}
-.card-images {
-    width: 200px;
-    height: 300px;
 }
