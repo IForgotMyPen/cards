@@ -27,7 +27,6 @@ button:hover {
     flex-wrap: wrap;
     min-height: 100vh;
     padding: 1rem;
-    padding-inline: 0;
 }
 .card-display-area {
     align-self: flex-start;
