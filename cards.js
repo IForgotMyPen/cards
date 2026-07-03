@@ -285,6 +285,7 @@ function stopTypingGame() {
 
 function checkUserTypingInput() {
     let userTypingInput = document.querySelector('#user-typing-input').value;
+    userTypingInput = userTypingInput.toLowerCase();
 
     for (const card of displayedCards) {        
         if (card.name === userTypingInput) {
