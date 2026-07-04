@@ -1,2 +1,2 @@
 # card_game
-A little card game that I am using to learn JavaScript!
+A site hosting various unconventional card games.
