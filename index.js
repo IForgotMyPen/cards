@@ -84,7 +84,7 @@ class Card {
     constructor(suit, rank, image) {
         this.#suit = suit;
         this.#rank = rank;
-        this.#image = `cards/${suit}_${rank}.png`;
+        this.#image = `card_images/${suit}_${rank}.png`;
         this.#name = `${this.rank} of ${this.suit}s`;
     }
 
