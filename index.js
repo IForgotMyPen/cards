@@ -1,11 +1,10 @@
-// Some "global variables" that are useful throughout the project
+let errorMessageTimeout; // Error message timeout time.
+let currentBoard; // The currently selected board.
+let boards = []; // An array of all boards.
 
-let errorMessageTimeout; // Error message timeout time
-let currentBoard; // The currently selected board
-let boards = []; // An array of all boards
-
-// Function for displaying an error message 
-
+/* 
+    Function for displaying an error message 
+*/
 function displayErrorMessage(message) {
     if (errorMessageTimeout !== undefined) {
         clearTimeout(errorMessageTimeout);
@@ -16,65 +15,16 @@ function displayErrorMessage(message) {
     errorMessageTimeout = setTimeout(() => errorMessage.textContent = '', 3000);
 }
 
-// Function for changing the board
-
-function changeBoard(event, newBoardName) {
-    currentBoard = getBoard(newBoardName); // using newBoardName because we are calling this in html
-
-    document.querySelectorAll('.board-content')
-        .forEach((board) => board.style.display = 'none');
-
-    document.querySelectorAll('.board-links')
-        .forEach((boardLink) => boardLink.classList.remove('active'));
-
-    Object.assign(document.querySelector(`#${newBoardName}`).style, {
-        display: 'flex',
-        width: '50%',
-        flexDirection: 'column',
-        margin: '0px auto',
-        alignItems: 'center',
-        gap: '10px'
-    })
-    event.currentTarget.classList.add('active');
+/* 
+    Function for capitalizing.
+*/
+function capitalize(str) {
+    return String(str).charAt(0).toUpperCase() + String(str).slice(1);
 }
 
-class Board {
-    #name; // name of the board
-    #currentDeck; // the currently selected deck on this board
-    #decks; // decks on this board
-
-    constructor (name) {
-        this.#name = name;
-
-        this.#currentDeck = {
-            cardCount: -1,
-            draw() {
-                displayErrorMessage('Error: No deck selected.');
-            },
-            resetDeck() {
-                displayErrorMessage('Error: No deck selected.');
-            },
-        }
-        boards.push(this);
-    }
-
-    get name() { return this.#name; }
-    get currentDeck() { return this.#currentDeck; }
-    get decks() { return this.#decks; }
-
-    setCurrentDeck(newCurrentDeck) {
-        this.#currentDeck = newCurrentDeck;
-    }
-}
-
-function getBoard(name) {
-    for (const board of boards) {
-        if (board.name === name) {return board;}
-    }
-}
-
-// Card class for individual cards
-
+/*
+    Class for individual card objects (e.g. three of hearts).
+*/
 class Card {
     #suit;
     #rank;
@@ -94,8 +44,9 @@ class Card {
     get name() {return this.#name;}
 }
 
-// Deck class for full decks (not necessarily the standard 52-card deck)
-
+/*
+    Class for entire deck objects (e.g. standard 52-card deck).
+*/
 class Deck {
     #name;
     #cardCount;
@@ -104,15 +55,14 @@ class Deck {
     #board;
 
     constructor(name, cards, board) {
-        this.#name = name; // name of the deck
-        this.#cardCount = cards.length; // number of cards in the deck
-        this.#cards = cards; // all cards in the deck (never edited)
-        this.#availableCards = [...this.#cards]; // all cards available to draw (gets edited)
-        this.#board = board; // board that the deck is on
+        this.#name = name; // The name of the deck.
+        this.#cardCount = cards.length; // The number of cards in the deck.
+        this.#cards = cards; // An array of all the cards in the deck (never edited).
+        this.#availableCards = [...this.#cards]; // An array of all the available cards in the deck (gets edited).
+        this.#board = board; // The board that the deck is on.
 
-        // Appending a new button to the deck-selection-menu div to switch the currentDeck variable 
-        // to this deck
-
+        /* Appending a new button to the deck-selection-menu div to switch the currentDeck 
+        variable to this deck */
         const deckPlaceholder = this;
 
         const newButton = Object.assign(document.createElement('button'), {
@@ -140,19 +90,18 @@ class Deck {
     get availableCards() { return this.#availableCards; }
     get board() { return this.#board; }
 
-    // Method for drawing a card from the available cards in the deck
-
+    /*
+        Method for drawing a card from the available cards in the deck.
+    */
     draw() {
 
-        // Simple catch to end the function if the deck is empty
-
+        // A simple catch to end the function if the deck is empty.
         if (currentBoard.currentDeck.cardCount === 0) {
             displayErrorMessage('Error: Deck empty. Try resetting.');
             return;
         }
 
-        // Get a random card from the available cards in the deck
-
+        // Get a random card from the available cards in the deck.
         function getRandomInt(max) {
             return Math.floor(Math.random() * max);
         }
@@ -166,8 +115,9 @@ class Deck {
         return randCard;
     }
 
-    // Helper method for creating a card image from a random card
-
+    /*
+        Helper method for creating a card image from a random card.
+    */
     createCardImageHelper(randCard) {
         return Object.assign(document.createElement('img'), {
             src: `${randCard.image}`,
@@ -177,8 +127,9 @@ class Deck {
         })
     }
 
-    // Helper method to remove a card from the available cards in the deck
-
+    /* 
+        Helper method to remove a card from the available cards in the deck.
+    */
     removeCardHelper(card) {
         const index = this.#availableCards.indexOf(card);
         if (index > -1) {
@@ -190,8 +141,9 @@ class Deck {
             `${this.#name} ${this.#cardCount}`;
     }
 
-    // Method to reset the deck (i.e. make all cards available again)
-
+    /*
+        Method to reset the deck (i.e. make all cards available again).
+    */
     resetDeck() {
         this.#availableCards = [...this.#cards];
         this.#cardCount = this.#cards.length;
@@ -201,34 +153,96 @@ class Deck {
     }
 }
 
-// Function for capitalizing
+/*
+    Class for board objects to create different "modes" (e.g. typing game, zen mode).
+*/
+class Board {
+    #name; // The name of the board.
+    #currentDeck; // The currently selected deck on this board.
+    #decks; // An array of all the decks on this board.
 
-function capitalize(str) {
-    return String(str).charAt(0).toUpperCase() + String(str).slice(1);
+    constructor (name) {
+        this.#name = name;
+
+        this.#currentDeck = {
+            cardCount: -1,
+            draw() {
+                displayErrorMessage('Error: No deck selected.');
+            },
+            resetDeck() {
+                displayErrorMessage('Error: No deck selected.');
+            },
+        }
+        boards.push(this);
+    }
+
+    get name() { return this.#name; }
+    get currentDeck() { return this.#currentDeck; }
+    get decks() { return this.#decks; }
+
+    setCurrentDeck(newCurrentDeck) {
+        this.#currentDeck = newCurrentDeck;
+    }
 }
 
-// Function for clearing the board of cards
+/*
+    Function for getting a board object from the name of the board. 
+    
+    This is useful for when we are calling changeBoard from html elements and need the specific
+    board object.
+*/
+function getBoard(boardName) {
+    for (const board of boards) {
+        if (board.name === boardName) {return board;}
+    }
+}
 
+/* 
+    Function for changing the board. This function is mostly called by html buttons.
+*/
+function changeBoard(newBoardName) {
+    currentBoard = getBoard(newBoardName);
+
+    document.querySelectorAll('.board-content')
+        .forEach((board) => board.style.display = 'none');
+
+    document.querySelectorAll('.board-links')
+        .forEach((boardLink) => boardLink.classList.remove('active'));
+
+    Object.assign(document.querySelector(`#${newBoardName}`).style, {
+        display: 'flex',
+        width: '50%',
+        flexDirection: 'column',
+        margin: '0px auto',
+        alignItems: 'center',
+        gap: '10px'
+    })
+    event.currentTarget.classList.add('active');
+}
+
+/*
+    Function for clearing the board of cards.
+*/
 function clearBoard() {
     document.querySelector(`#${currentBoard.name}`)
         .querySelector('.card-display-area').innerHTML = '';
 }
 
-// TYPING MINIGAME
+/* ----------------------------------- TYPING MINIGAME ------------------------------------------ */
 
-let displayedCards = [];
-let checkTypingLoop;
-let drawLoop;
-let timeLoop;
-let timeRemaining;
+let displayedCards = []; // An array of all the cards currently displayed on the board.
+let checkTypingLoop; // Pointer for an interval that checks the user input.
+let drawLoop; // Pointer for an interval that draws from the deck.
+let timeLoop; // Pointer for an interval that updates the time remaining.
+let timeRemaining; // The amount of time remaining (in seconds).
 
-// function for starting the typing minigame
-// basically just starts the function loops
+/*
+    Function for starting the typing minigame.
 
+    Initializes the intervals.
+*/
 function startTypingGame() {
-    // checks if a deck has been selected
-    // if not, displays and error and does not start the minigame
-
+    // Checks if a deck has been selected and displays error if not.
     if (currentBoard.currentDeck.cardCount === -1) {
         displayErrorMessage('Error: Cannot start game. Try selecting a deck.');
         return;
@@ -241,15 +255,17 @@ function startTypingGame() {
     updateTimeRemaining();
     timeLoop = setInterval(updateTimeRemaining, 1000);
 
-    // hides all other buttons so the user cannot switch between boards or decks during the game
-
+    // Hides all other buttons so the user cannot switch between boards or decks during the game.
     document.querySelectorAll('.board-links').forEach((boardLink) => boardLink.style.display = 'none');
     document.querySelector('#typing-board').querySelectorAll('.deck-links')
         .forEach((deckLink) => deckLink.style.display = 'none');
 }
 
-// function for stopping the typing minigame
+/* 
+    Function for stopping the typing minigame.
 
+    Clears the intervals.
+*/
 function stopTypingGame() {
     if (timeRemaining === undefined) {
         displayErrorMessage('Error: No currently running game.');
@@ -260,29 +276,29 @@ function stopTypingGame() {
     clearInterval(drawLoop);
     clearInterval(timeLoop);
 
-    // reset deck, clear board and user input area
-
+    // Reset deck, clear board, clear user input area.
     currentBoard.currentDeck.resetDeck();
     clearBoard();
     document.querySelector('#user-typing-input').value = '';
 
-    // reset time remaining, clear html element
-
+    // Reset time remaining, clear html element.
     timeRemaining = undefined;
     document.querySelector('#typing-board').querySelector('#time-remaining')
             .innerHTML = '';
     
-    // displays the buttons for the boards and decks again
-    
+    // Displays the buttons for the boards and decks again.
     document.querySelectorAll('.board-links').forEach((boardLink) => boardLink.style.display = '');  
     document.querySelector('#typing-board').querySelectorAll('.deck-links')
         .forEach((deckLink) => deckLink.style.display = '');
 }
 
-// function for checking if the user input the name of a displayed card
-// if user did, it clears that card from the board
-// also checks to see if the player has cleared all the cards, in which case they win
+/*
+    Function for checking if the user input the name of a displayed card.
 
+    If the user did, it clears that card from the board.
+
+    Also checks to see if the player has cleared all the cards, in which case they win.
+*/
 function checkUserTypingInput() {
     let userTypingInput = document.querySelector('#user-typing-input').value;
     userTypingInput = userTypingInput.toLowerCase();
@@ -306,23 +322,27 @@ function checkUserTypingInput() {
     }
 }
 
-// function for drawing another card to the board
-
+/*
+    Function for drawing another card to the board.
+*/
 function drawFromCurrentDeck() {
     if (currentBoard.currentDeck.availableCards.length !== 0) {
         displayedCards.push(typingBoard.currentDeck.draw());
     }
 }
 
-// function for getting the initial remaining time based on the length of the currently selected deck
-
+/*
+    Function for getting the initial remaining time based on the length of the currently selected deck.
+*/
 function getInitialTime() {
-    return currentBoard.currentDeck.cardCount * 5;
+    return currentBoard.currentDeck.cardCount * 4;
 }
 
-// function for updating the remaining time
-// also checks if the remaining time hits zero, and ends the game if so
+/* 
+    Function for updating the time remaining.
 
+    Also checks if the remaining time hits zero, in which case the user loses.
+*/
 function updateTimeRemaining() {
     if (timeRemaining === undefined) {
         timeRemaining = getInitialTime();
@@ -343,32 +363,28 @@ function updateTimeRemaining() {
     }
 }
 
-
-
-// Creating placeholder decks for testing new things
+/* ------------------------------------- PLACEHOLDERS --------------------------------------------*/
 
 const suits = ['spade', 'heart', 'diamond', 'club'];
 
 const ranks = ['ace','two','three','four','five','six','seven','eight','nine','ten','jack','queen','king'];
 
-const deck1Cards = [];
+const standardDeck = [];
 for (const suit of suits) {
     for (const rank of ranks) {
-        deck1Cards.push(new Card(suit, rank, `${suit}_${rank}.png`));
+        standardDeck.push(new Card(suit, rank, `${suit}_${rank}.png`));
     }
 }
 
-const deck2Cards = [];
+const allHeartsDeck = [];
 for (const rank of ranks) {
-    deck2Cards.push(new Card('heart', rank, `heart_${rank}.png`));
+    allHeartsDeck.push(new Card('heart', rank, `heart_${rank}.png`));
 }
-
-// Creating boards
 
 const zenBoard = new Board('zen-board');
 const typingBoard = new Board('typing-board');
 
-const deck1 = new Deck('standard', deck1Cards, zenBoard);
-const deck2 = new Deck('all-hearts', deck2Cards, zenBoard);
-const deck5 = new Deck('standard', deck1Cards, typingBoard);
-const deck6 = new Deck('all-hearts', deck2Cards, typingBoard);
+const deck1 = new Deck('standard', standardDeck, zenBoard);
+const deck2 = new Deck('all-hearts', allHeartsDeck, zenBoard);
+const deck5 = new Deck('standard', standardDeck, typingBoard);
+const deck6 = new Deck('all-hearts', allHeartsDeck, typingBoard);
